@@ -5,12 +5,10 @@
 </script>
 
 <style>
-  .card-maker {
-    
-  }
 
 </style>
 
 <div class="card-maker">
   <Card {en} {tw} editable={true}></Card>
+  <button>SAVE</button>
 </div>

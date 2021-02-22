@@ -410,13 +410,6 @@ var app = (function () {
         node[property] = value;
         dispatch_dev('SvelteDOMSetProperty', { node, property, value });
     }
-    function set_data_dev(text, data) {
-        data = '' + data;
-        if (text.wholeText === data)
-            return;
-        dispatch_dev('SvelteDOMSetData', { node: text, data });
-        text.data = data;
-    }
     function validate_each_argument(arg) {
         if (typeof arg !== 'string' && !(arg && typeof arg === 'object' && 'length' in arg)) {
             let msg = '{#each} only iterates over array-like objects.';
@@ -468,9 +461,9 @@ var app = (function () {
     			input = element("input");
     			attr_dev(input, "class", "card-maker__text svelte-spu3vm");
     			attr_dev(input, "style", /*inputStyle*/ ctx[3]);
-    			input.readOnly = /*readonly*/ ctx[1];
+    			input.disabled = /*disabled*/ ctx[1];
     			attr_dev(input, "clas", "");
-    			add_location(input, file, 43, 0, 887);
+    			add_location(input, file, 43, 0, 895);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -494,8 +487,8 @@ var app = (function () {
     				attr_dev(input, "style", /*inputStyle*/ ctx[3]);
     			}
 
-    			if (dirty & /*readonly*/ 2) {
-    				prop_dev(input, "readOnly", /*readonly*/ ctx[1]);
+    			if (dirty & /*disabled*/ 2) {
+    				prop_dev(input, "disabled", /*disabled*/ ctx[1]);
     			}
 
     			if (dirty & /*value*/ 1 && input.value !== /*value*/ ctx[0]) {
@@ -543,7 +536,7 @@ var app = (function () {
     	let inputStyle;
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("ATextbox", slots, []);
-    	let { readonly } = $$props;
+    	let { disabled = false } = $$props;
     	let { value } = $$props;
     	let { fontSize = "1rem" } = $$props;
     	let inputElement;
@@ -552,7 +545,7 @@ var app = (function () {
     		$$invalidate(2, inputElement.size = strLength(value), inputElement);
     	});
 
-    	const writable_props = ["readonly", "value", "fontSize"];
+    	const writable_props = ["disabled", "value", "fontSize"];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console_1.warn(`<ATextbox> was created with unknown prop '${key}'`);
@@ -571,14 +564,14 @@ var app = (function () {
     	}
 
     	$$self.$$set = $$props => {
-    		if ("readonly" in $$props) $$invalidate(1, readonly = $$props.readonly);
+    		if ("disabled" in $$props) $$invalidate(1, disabled = $$props.disabled);
     		if ("value" in $$props) $$invalidate(0, value = $$props.value);
     		if ("fontSize" in $$props) $$invalidate(4, fontSize = $$props.fontSize);
     	};
 
     	$$self.$capture_state = () => ({
     		onMount,
-    		readonly,
+    		disabled,
     		value,
     		fontSize,
     		inputElement,
@@ -588,7 +581,7 @@ var app = (function () {
     	});
 
     	$$self.$inject_state = $$props => {
-    		if ("readonly" in $$props) $$invalidate(1, readonly = $$props.readonly);
+    		if ("disabled" in $$props) $$invalidate(1, disabled = $$props.disabled);
     		if ("value" in $$props) $$invalidate(0, value = $$props.value);
     		if ("fontSize" in $$props) $$invalidate(4, fontSize = $$props.fontSize);
     		if ("inputElement" in $$props) $$invalidate(2, inputElement = $$props.inputElement);
@@ -607,7 +600,7 @@ var app = (function () {
 
     	return [
     		value,
-    		readonly,
+    		disabled,
     		inputElement,
     		inputStyle,
     		fontSize,
@@ -619,7 +612,7 @@ var app = (function () {
     class ATextbox extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance, create_fragment, safe_not_equal, { readonly: 1, value: 0, fontSize: 4 });
+    		init(this, options, instance, create_fragment, safe_not_equal, { disabled: 1, value: 0, fontSize: 4 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -631,20 +624,16 @@ var app = (function () {
     		const { ctx } = this.$$;
     		const props = options.props || {};
 
-    		if (/*readonly*/ ctx[1] === undefined && !("readonly" in props)) {
-    			console_1.warn("<ATextbox> was created without expected prop 'readonly'");
-    		}
-
     		if (/*value*/ ctx[0] === undefined && !("value" in props)) {
     			console_1.warn("<ATextbox> was created without expected prop 'value'");
     		}
     	}
 
-    	get readonly() {
+    	get disabled() {
     		throw new Error("<ATextbox>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
-    	set readonly(value) {
+    	set disabled(value) {
     		throw new Error("<ATextbox>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
@@ -669,23 +658,25 @@ var app = (function () {
     const file$1 = "src/Card.svelte";
 
     function create_fragment$1(ctx) {
-    	let div;
-    	let t0;
-    	let t1;
+    	let div2;
+    	let div0;
     	let atextbox0;
     	let updating_value;
-    	let t2;
+    	let t;
+    	let div1;
     	let atextbox1;
     	let updating_value_1;
-    	let t3;
-    	let button;
     	let current;
 
     	function atextbox0_value_binding(value) {
-    		/*atextbox0_value_binding*/ ctx[2](value);
+    		/*atextbox0_value_binding*/ ctx[3](value);
     	}
 
-    	let atextbox0_props = { fontSize: "3rem" };
+    	let atextbox0_props = {
+    		fontSize: "3rem",
+    		class: "",
+    		disabled: !/*editable*/ ctx[2]
+    	};
 
     	if (/*en*/ ctx[0] !== void 0) {
     		atextbox0_props.value = /*en*/ ctx[0];
@@ -695,10 +686,10 @@ var app = (function () {
     	binding_callbacks.push(() => bind(atextbox0, "value", atextbox0_value_binding));
 
     	function atextbox1_value_binding(value) {
-    		/*atextbox1_value_binding*/ ctx[3](value);
+    		/*atextbox1_value_binding*/ ctx[4](value);
     	}
 
-    	let atextbox1_props = {};
+    	let atextbox1_props = { disabled: !/*editable*/ ctx[2] };
 
     	if (/*tw*/ ctx[1] !== void 0) {
     		atextbox1_props.value = /*tw*/ ctx[1];
@@ -709,36 +700,34 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
-    			div = element("div");
-    			t0 = text(/*tw*/ ctx[1]);
-    			t1 = space();
+    			div2 = element("div");
+    			div0 = element("div");
     			create_component(atextbox0.$$.fragment);
-    			t2 = space();
+    			t = space();
+    			div1 = element("div");
     			create_component(atextbox1.$$.fragment);
-    			t3 = space();
-    			button = element("button");
-    			button.textContent = "SAVE";
-    			attr_dev(div, "class", "card-maker svelte-df8ig6");
-    			add_location(div, file$1, 26, 0, 442);
-    			add_location(button, file$1, 36, 0, 578);
+    			attr_dev(div0, "class", "card__content svelte-1sget3a");
+    			add_location(div0, file$1, 31, 2, 529);
+    			attr_dev(div1, "class", "card__content svelte-1sget3a");
+    			add_location(div1, file$1, 39, 2, 679);
+    			attr_dev(div2, "class", "card svelte-1sget3a");
+    			add_location(div2, file$1, 30, 0, 507);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    			append_dev(div, t0);
-    			append_dev(div, t1);
-    			mount_component(atextbox0, div, null);
-    			append_dev(div, t2);
-    			mount_component(atextbox1, div, null);
-    			insert_dev(target, t3, anchor);
-    			insert_dev(target, button, anchor);
+    			insert_dev(target, div2, anchor);
+    			append_dev(div2, div0);
+    			mount_component(atextbox0, div0, null);
+    			append_dev(div2, t);
+    			append_dev(div2, div1);
+    			mount_component(atextbox1, div1, null);
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
-    			if (!current || dirty & /*tw*/ 2) set_data_dev(t0, /*tw*/ ctx[1]);
     			const atextbox0_changes = {};
+    			if (dirty & /*editable*/ 4) atextbox0_changes.disabled = !/*editable*/ ctx[2];
 
     			if (!updating_value && dirty & /*en*/ 1) {
     				updating_value = true;
@@ -748,6 +737,7 @@ var app = (function () {
 
     			atextbox0.$set(atextbox0_changes);
     			const atextbox1_changes = {};
+    			if (dirty & /*editable*/ 4) atextbox1_changes.disabled = !/*editable*/ ctx[2];
 
     			if (!updating_value_1 && dirty & /*tw*/ 2) {
     				updating_value_1 = true;
@@ -769,11 +759,9 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
+    			if (detaching) detach_dev(div2);
     			destroy_component(atextbox0);
     			destroy_component(atextbox1);
-    			if (detaching) detach_dev(t3);
-    			if (detaching) detach_dev(button);
     		}
     	};
 
@@ -791,9 +779,10 @@ var app = (function () {
     function instance$1($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("Card", slots, []);
+    	let { editable = false } = $$props;
     	let { en } = $$props;
     	let { tw } = $$props;
-    	const writable_props = ["en", "tw"];
+    	const writable_props = ["editable", "en", "tw"];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<Card> was created with unknown prop '${key}'`);
@@ -810,13 +799,15 @@ var app = (function () {
     	}
 
     	$$self.$$set = $$props => {
+    		if ("editable" in $$props) $$invalidate(2, editable = $$props.editable);
     		if ("en" in $$props) $$invalidate(0, en = $$props.en);
     		if ("tw" in $$props) $$invalidate(1, tw = $$props.tw);
     	};
 
-    	$$self.$capture_state = () => ({ ATextbox, en, tw });
+    	$$self.$capture_state = () => ({ ATextbox, editable, en, tw });
 
     	$$self.$inject_state = $$props => {
+    		if ("editable" in $$props) $$invalidate(2, editable = $$props.editable);
     		if ("en" in $$props) $$invalidate(0, en = $$props.en);
     		if ("tw" in $$props) $$invalidate(1, tw = $$props.tw);
     	};
@@ -825,13 +816,13 @@ var app = (function () {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [en, tw, atextbox0_value_binding, atextbox1_value_binding];
+    	return [en, tw, editable, atextbox0_value_binding, atextbox1_value_binding];
     }
 
     class Card extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$1, create_fragment$1, safe_not_equal, { en: 0, tw: 1 });
+    		init(this, options, instance$1, create_fragment$1, safe_not_equal, { editable: 2, en: 0, tw: 1 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -850,6 +841,14 @@ var app = (function () {
     		if (/*tw*/ ctx[1] === undefined && !("tw" in props)) {
     			console.warn("<Card> was created without expected prop 'tw'");
     		}
+    	}
+
+    	get editable() {
+    		throw new Error("<Card>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set editable(value) {
+    		throw new Error("<Card>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
     	get en() {
@@ -875,6 +874,8 @@ var app = (function () {
     function create_fragment$2(ctx) {
     	let div;
     	let card;
+    	let t0;
+    	let button;
     	let current;
 
     	card = new Card({
@@ -890,8 +891,12 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			create_component(card.$$.fragment);
-    			attr_dev(div, "class", "card-maker svelte-1p312kc");
-    			add_location(div, file$2, 13, 0, 134);
+    			t0 = space();
+    			button = element("button");
+    			button.textContent = "SAVE";
+    			add_location(button, file$2, 12, 2, 178);
+    			attr_dev(div, "class", "card-maker");
+    			add_location(div, file$2, 10, 0, 109);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -899,6 +904,8 @@ var app = (function () {
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
     			mount_component(card, div, null);
+    			append_dev(div, t0);
+    			append_dev(div, button);
     			current = true;
     		},
     		p: noop,

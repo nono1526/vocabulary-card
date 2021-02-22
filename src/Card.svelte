@@ -1,13 +1,13 @@
 <script>
   import ATextbox from './ATextbox.svelte'
-
+  export let editable = false
   export let en
   export let tw
   
 </script>
 
 <style>
-  .card-maker {
+  .card {
     width: 380px;
     height: 200px;
     border-radius: 10px;
@@ -21,17 +21,26 @@
     padding: 4px;
     user-select: none;
   }
+  
+  .card__content {
+    margin: 4px
+  }
 
 </style>
 
-<div class="card-maker" >
-  {tw}
-  <ATextbox
-    bind:value={en}
-    fontSize={'3rem'}
-  />
-  <ATextbox
-    bind:value={tw}
-  />
+<div class="card" >
+  <div class="card__content">
+      <ATextbox
+      bind:value={en}
+      fontSize={'3rem'}
+      class=""
+      disabled={!editable}
+    />
+  </div>
+  <div class="card__content">
+    <ATextbox
+      bind:value={tw}
+      disabled={!editable}
+    />
+  </div>
 </div>
-<button>SAVE</button>

@@ -1,6 +1,6 @@
 <script>
   import { onMount } from 'svelte'
-  export let readonly
+  export let disabled = false
   export let value
   export let fontSize = '1rem'
   let inputElement
@@ -46,7 +46,7 @@
   style={inputStyle}
   bind:value
   bind:this={inputElement}
-  {readonly}
+  {disabled}
   on:input={handleInput}
   clas
 />
