@@ -30,9 +30,10 @@ function _init () {
   })
 }
 
-export function useDB () {
+export function useDB (dbLoaded = () => {}) {
   onMount(async () => {
     db = await _init()
+    dbLoaded()
   })
 
   onDestroy(() => {

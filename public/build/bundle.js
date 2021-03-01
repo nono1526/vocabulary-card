@@ -1296,9 +1296,10 @@ var app = (function () {
       })
     }
 
-    function useDB () {
+    function useDB (dbLoaded = () => {}) {
       onMount(async () => {
         db = await _init();
+        dbLoaded();
       });
 
       onDestroy(() => {
@@ -1352,12 +1353,12 @@ var app = (function () {
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[6] = list[i];
+    	child_ctx[5] = list[i];
     	return child_ctx;
     }
 
-    // (38:2) <AButton on:click={syncDB(vocabularies)}>
-    function create_default_slot_2(ctx) {
+    // (26:2) <AButton on:click={syncDB(vocabularies)}>
+    function create_default_slot_1(ctx) {
     	let t;
 
     	const block = {
@@ -1374,43 +1375,16 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_default_slot_2.name,
-    		type: "slot",
-    		source: "(38:2) <AButton on:click={syncDB(vocabularies)}>",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (39:2) <AButton on:click={fetchAll}>
-    function create_default_slot_1(ctx) {
-    	let t;
-
-    	const block = {
-    		c: function create() {
-    			t = text("GET ALL");
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, t, anchor);
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(t);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
     		id: create_default_slot_1.name,
     		type: "slot",
-    		source: "(39:2) <AButton on:click={fetchAll}>",
+    		source: "(26:2) <AButton on:click={syncDB(vocabularies)}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (43:4) <Card {...vocabulary}>
+    // (30:4) <Card {...vocabulary}>
     function create_default_slot$1(ctx) {
     	let t;
 
@@ -1430,18 +1404,18 @@ var app = (function () {
     		block,
     		id: create_default_slot$1.name,
     		type: "slot",
-    		source: "(43:4) <Card {...vocabulary}>",
+    		source: "(30:4) <Card {...vocabulary}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (42:2) {#each vocabularies as vocabulary }
+    // (29:2) {#each vocabularies as vocabulary }
     function create_each_block(ctx) {
     	let card;
     	let current;
-    	const card_spread_levels = [/*vocabulary*/ ctx[6]];
+    	const card_spread_levels = [/*vocabulary*/ ctx[5]];
 
     	let card_props = {
     		$$slots: { default: [create_default_slot$1] },
@@ -1464,10 +1438,10 @@ var app = (function () {
     		},
     		p: function update(ctx, dirty) {
     			const card_changes = (dirty & /*vocabularies*/ 1)
-    			? get_spread_update(card_spread_levels, [get_spread_object(/*vocabulary*/ ctx[6])])
+    			? get_spread_update(card_spread_levels, [get_spread_object(/*vocabulary*/ ctx[5])])
     			: {};
 
-    			if (dirty & /*$$scope*/ 512) {
+    			if (dirty & /*$$scope*/ 256) {
     				card_changes.$$scope = { dirty, ctx };
     			}
 
@@ -1491,7 +1465,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(42:2) {#each vocabularies as vocabulary }",
+    		source: "(29:2) {#each vocabularies as vocabulary }",
     		ctx
     	});
 
@@ -1500,27 +1474,13 @@ var app = (function () {
 
     function create_fragment$4(ctx) {
     	let main;
-    	let abutton0;
+    	let abutton;
     	let t0;
-    	let abutton1;
-    	let t1;
     	let cardmaker;
-    	let t2;
+    	let t1;
     	let current;
 
-    	abutton0 = new AButton({
-    			props: {
-    				$$slots: { default: [create_default_slot_2] },
-    				$$scope: { ctx }
-    			},
-    			$$inline: true
-    		});
-
-    	abutton0.$on("click", function () {
-    		if (is_function(/*syncDB*/ ctx[2](/*vocabularies*/ ctx[0]))) /*syncDB*/ ctx[2](/*vocabularies*/ ctx[0]).apply(this, arguments);
-    	});
-
-    	abutton1 = new AButton({
+    	abutton = new AButton({
     			props: {
     				$$slots: { default: [create_default_slot_1] },
     				$$scope: { ctx }
@@ -1528,7 +1488,10 @@ var app = (function () {
     			$$inline: true
     		});
 
-    	abutton1.$on("click", /*fetchAll*/ ctx[3]);
+    	abutton.$on("click", function () {
+    		if (is_function(/*syncDB*/ ctx[2](/*vocabularies*/ ctx[0]))) /*syncDB*/ ctx[2](/*vocabularies*/ ctx[0]).apply(this, arguments);
+    	});
+
     	cardmaker = new CardMaker({ $$inline: true });
     	cardmaker.$on("add-card", /*addCard*/ ctx[1]);
     	let each_value = /*vocabularies*/ ctx[0];
@@ -1546,30 +1509,26 @@ var app = (function () {
     	const block = {
     		c: function create() {
     			main = element("main");
-    			create_component(abutton0.$$.fragment);
+    			create_component(abutton.$$.fragment);
     			t0 = space();
-    			create_component(abutton1.$$.fragment);
-    			t1 = space();
     			create_component(cardmaker.$$.fragment);
-    			t2 = space();
+    			t1 = space();
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				each_blocks[i].c();
     			}
 
-    			add_location(main, file$4, 36, 0, 653);
+    			add_location(main, file$4, 24, 0, 497);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, main, anchor);
-    			mount_component(abutton0, main, null);
+    			mount_component(abutton, main, null);
     			append_dev(main, t0);
-    			mount_component(abutton1, main, null);
-    			append_dev(main, t1);
     			mount_component(cardmaker, main, null);
-    			append_dev(main, t2);
+    			append_dev(main, t1);
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				each_blocks[i].m(main, null);
@@ -1579,20 +1538,13 @@ var app = (function () {
     		},
     		p: function update(new_ctx, [dirty]) {
     			ctx = new_ctx;
-    			const abutton0_changes = {};
+    			const abutton_changes = {};
 
-    			if (dirty & /*$$scope*/ 512) {
-    				abutton0_changes.$$scope = { dirty, ctx };
+    			if (dirty & /*$$scope*/ 256) {
+    				abutton_changes.$$scope = { dirty, ctx };
     			}
 
-    			abutton0.$set(abutton0_changes);
-    			const abutton1_changes = {};
-
-    			if (dirty & /*$$scope*/ 512) {
-    				abutton1_changes.$$scope = { dirty, ctx };
-    			}
-
-    			abutton1.$set(abutton1_changes);
+    			abutton.$set(abutton_changes);
 
     			if (dirty & /*vocabularies*/ 1) {
     				each_value = /*vocabularies*/ ctx[0];
@@ -1624,8 +1576,7 @@ var app = (function () {
     		},
     		i: function intro(local) {
     			if (current) return;
-    			transition_in(abutton0.$$.fragment, local);
-    			transition_in(abutton1.$$.fragment, local);
+    			transition_in(abutton.$$.fragment, local);
     			transition_in(cardmaker.$$.fragment, local);
 
     			for (let i = 0; i < each_value.length; i += 1) {
@@ -1635,8 +1586,7 @@ var app = (function () {
     			current = true;
     		},
     		o: function outro(local) {
-    			transition_out(abutton0.$$.fragment, local);
-    			transition_out(abutton1.$$.fragment, local);
+    			transition_out(abutton.$$.fragment, local);
     			transition_out(cardmaker.$$.fragment, local);
     			each_blocks = each_blocks.filter(Boolean);
 
@@ -1648,8 +1598,7 @@ var app = (function () {
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(main);
-    			destroy_component(abutton0);
-    			destroy_component(abutton1);
+    			destroy_component(abutton);
     			destroy_component(cardmaker);
     			destroy_each(each_blocks, detaching);
     		}
@@ -1669,21 +1618,7 @@ var app = (function () {
     function instance$4($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("App", slots, []);
-
-    	let vocabularies = [
-    		{
-    			id: 1,
-    			en: "Nono",
-    			partOfSpeech: "n",
-    			tw: "帥哥"
-    		},
-    		{
-    			id: 2,
-    			en: "Dica",
-    			partOfSpeech: "n",
-    			tw: "可愛小狗"
-    		}
-    	];
+    	let vocabularies = [];
 
     	function addCard(card) {
     		console.log("card", card);
@@ -1695,12 +1630,9 @@ var app = (function () {
     		add(data);
     	}
 
-    	const { add, getAll } = useDB();
-
-    	async function fetchAll() {
+    	const { add, getAll } = useDB(async () => {
     		$$invalidate(0, vocabularies = await getAll());
-    		console.log(vocabularies);
-    	}
+    	});
 
     	const writable_props = [];
 
@@ -1713,12 +1645,12 @@ var app = (function () {
     		CardMaker,
     		useDB,
     		AButton,
+    		onMount,
     		vocabularies,
     		addCard,
     		syncDB,
     		add,
-    		getAll,
-    		fetchAll
+    		getAll
     	});
 
     	$$self.$inject_state = $$props => {
@@ -1729,7 +1661,7 @@ var app = (function () {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [vocabularies, addCard, syncDB, fetchAll];
+    	return [vocabularies, addCard, syncDB];
     }
 
     class App extends SvelteComponentDev {
