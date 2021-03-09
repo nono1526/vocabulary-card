@@ -1344,8 +1344,7 @@ var app = (function () {
 
       const clearAll = async () => {
         return new Promise((resolve, reject) => {
-          const transaction = db.transaction(['cards'], 'readwrite');
-          const objectStore = transaction.objectStore('cards');
+          const objectStore = _getObjectStore('cards');
           const clearRequest = objectStore.clear();
 
           clearRequest.onsuccess = e => {

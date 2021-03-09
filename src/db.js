@@ -43,9 +43,7 @@ export function useDB (dbLoaded = () => {}) {
   const getAll = async () => {
     cards.length = 0
     return new Promise((resolve, reject) => {
-      const objectStore = db
-      .transaction(['cards'], 'readwrite')
-      .objectStore('cards')
+      const objectStore = _getObjectStore('cards')
 
       objectStore.openCursor().onsuccess = e => {
         const cursor = e.target.result
@@ -78,8 +76,7 @@ export function useDB (dbLoaded = () => {}) {
 
   const clearAll = async () => {
     return new Promise((resolve, reject) => {
-      const transaction = db.transaction(['cards'], 'readwrite')
-      const objectStore = transaction.objectStore('cards')
+      const objectStore = _getObjectStore('cards')
       const clearRequest = objectStore.clear()
 
       clearRequest.onsuccess = e => {
@@ -101,11 +98,7 @@ export function useDB (dbLoaded = () => {}) {
   }
 
   const addItems = insertedItems => {
-    const transaction = db.transaction(['cards'], 'readwrite')
-    transaction.oncomplete = function(event) {
-      console.log('All done!');
-    }
-    const objectStore = transaction.objectStore('cards')
+    const objectStore = const objectStore = _getObjectStore('cards')
     for (let i in insertedItems) {
       let request = objectStore.add(insertedItems[i])
       request.onsuccess = e => {
