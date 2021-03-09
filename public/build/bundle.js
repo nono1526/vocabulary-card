@@ -1307,6 +1307,7 @@ var app = (function () {
       });
 
       const getAll = async () => {
+        cards.length = 0;
         return new Promise((resolve, reject) => {
           const objectStore = db
           .transaction(['cards'], 'readwrite')
