@@ -91,6 +91,15 @@ export function useDB (dbLoaded = () => {}) {
     })
   }
 
+  const addItem = item => {
+    return new Promise((resolve, reject) => {
+      const objectStore = _getObjectStore('cards')
+      const request = objectStore.add(item)
+      request.onsuccess = e => resolve(e.target.result)
+      request.onerror = e => reject(e)
+    })
+  }
+
   const addItems = insertedItems => {
     const transaction = db.transaction(['cards'], 'readwrite')
     transaction.oncomplete = function(event) {
@@ -100,12 +109,13 @@ export function useDB (dbLoaded = () => {}) {
     for (let i in insertedItems) {
       let request = objectStore.add(insertedItems[i])
       request.onsuccess = e => {
-        console.log(e)
+        resolve(e)
       }
     }
   }
 
   return {
+    addItem,
     addItems,
     getAll,
     clearAll,

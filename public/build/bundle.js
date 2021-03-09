@@ -1357,6 +1357,15 @@ var app = (function () {
         })
       };
 
+      const addItem = item => {
+        return new Promise((resolve, reject) => {
+          const objectStore = _getObjectStore('cards');
+          const request = objectStore.add(item);
+          request.onsuccess = e => resolve(e.target.result);
+          request.onerror = e => reject(e);
+        })
+      };
+
       const addItems = insertedItems => {
         const transaction = db.transaction(['cards'], 'readwrite');
         transaction.oncomplete = function(event) {
@@ -1366,12 +1375,13 @@ var app = (function () {
         for (let i in insertedItems) {
           let request = objectStore.add(insertedItems[i]);
           request.onsuccess = e => {
-            console.log(e);
+            resolve(e);
           };
         }
       };
 
       return {
+        addItem,
         addItems,
         getAll,
         clearAll,
@@ -1390,7 +1400,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (38:2) <AButton on:click={resetCardDBTable}>
+    // (41:2) <AButton on:click={resetCardDBTable}>
     function create_default_slot_1(ctx) {
     	let t;
 
@@ -1410,14 +1420,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_1.name,
     		type: "slot",
-    		source: "(38:2) <AButton on:click={resetCardDBTable}>",
+    		source: "(41:2) <AButton on:click={resetCardDBTable}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (41:4) <Card key={vocabulary.key} {...vocabulary}>
+    // (44:4) <Card key={vocabulary.key} {...vocabulary}>
     function create_default_slot$1(ctx) {
     	let t;
 
@@ -1437,14 +1447,14 @@ var app = (function () {
     		block,
     		id: create_default_slot$1.name,
     		type: "slot",
-    		source: "(41:4) <Card key={vocabulary.key} {...vocabulary}>",
+    		source: "(44:4) <Card key={vocabulary.key} {...vocabulary}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (40:2) {#each vocabularies as vocabulary }
+    // (43:2) {#each vocabularies as vocabulary }
     function create_each_block(ctx) {
     	let card;
     	let t0;
@@ -1475,7 +1485,7 @@ var app = (function () {
     			t0 = space();
     			button = element("button");
     			button.textContent = "Remove";
-    			add_location(button, file$4, 41, 4, 1109);
+    			add_location(button, file$4, 44, 4, 1157);
     		},
     		m: function mount(target, anchor) {
     			mount_component(card, target, anchor);
@@ -1526,7 +1536,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(40:2) {#each vocabularies as vocabulary }",
+    		source: "(43:2) {#each vocabularies as vocabulary }",
     		ctx
     	});
 
@@ -1576,7 +1586,7 @@ var app = (function () {
     				each_blocks[i].c();
     			}
 
-    			add_location(main, file$4, 36, 0, 881);
+    			add_location(main, file$4, 39, 0, 929);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1677,10 +1687,10 @@ var app = (function () {
     	validate_slots("App", slots, []);
     	let vocabularies = [];
 
-    	function addCard({ detail: vocabulary }) {
-    		vocabularies.push(vocabulary);
+    	async function addCard({ detail: vocabulary }) {
+    		const key = await addItem(vocabulary);
+    		vocabularies.push({ ...vocabulary, key });
     		$$invalidate(0, vocabularies);
-    		addItems([vocabulary]);
     	}
 
     	async function resetCardDBTable() {
@@ -1696,7 +1706,7 @@ var app = (function () {
     		deleteItem(vocabulary.key);
     	}
 
-    	const { addItems, getAll, clearAll, deleteItem } = useDB(async () => {
+    	const { addItem, getAll, clearAll, deleteItem } = useDB(async () => {
     		$$invalidate(0, vocabularies = await getAll());
     		console.log(vocabularies);
     	});
@@ -1719,7 +1729,7 @@ var app = (function () {
     		addCard,
     		resetCardDBTable,
     		removeCard,
-    		addItems,
+    		addItem,
     		getAll,
     		clearAll,
     		deleteItem

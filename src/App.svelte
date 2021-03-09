@@ -7,10 +7,13 @@
 
   let vocabularies = []
 
-  function addCard ({detail: vocabulary}) {
-    vocabularies.push(vocabulary)
+  async function addCard ({detail: vocabulary}) {
+    const key = await addItem(vocabulary)
+    vocabularies.push({
+      ...vocabulary,
+      key
+    })
     vocabularies = vocabularies
-    addItems([vocabulary])
   }
   
   async function resetCardDBTable () {
@@ -28,7 +31,7 @@
     deleteItem(vocabulary.key)
   }
 
-  const { addItems, getAll, clearAll, deleteItem } = useDB(async () => {
+  const { addItem, getAll, clearAll, deleteItem } = useDB(async () => {
     vocabularies = await getAll()
     console.log(vocabularies)
   })
