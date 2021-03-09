@@ -40,7 +40,7 @@
 <main>
   <AButton on:click={resetCardDBTable}>Clear Card Table in DB</AButton>
   <CardMaker on:add-card={addCard}/>
-  {#each vocabularies as vocabulary }
+  {#each vocabularies as vocabulary (vocabulary.key) }
     <Card key={vocabulary.key} {...vocabulary}>This is my card</Card>
     <button on:click={(e) => removeCard(vocabulary)}>Remove</button>
   {/each}
