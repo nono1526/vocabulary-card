@@ -17,17 +17,28 @@
     add(data)
   }
 
+  function removeCard (vocabulary) {
+    const index = vocabularies.indexOf(vocabulary)
+    const isIndexExists = index !== -1
+    isIndexExists && (
+      vocabularies.splice(index, 1)
+    )
+    vocabularies = vocabularies
+  }
+
   const { add, getAll } = useDB(async () => {
     vocabularies = await getAll()
   })
 </script>
 
 <main>
+  {vocabularies}
   <AButton on:click={syncDB(vocabularies)}>SAVE TO DB</AButton>
   
   <CardMaker on:add-card={addCard}/>
   {#each vocabularies as vocabulary }
     <Card {...vocabulary}>This is my card</Card>
+    <button on:click={(e) => removeCard(vocabulary)}>Remove</button>
   {/each}
 </main>
 
