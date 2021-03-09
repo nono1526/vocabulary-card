@@ -12,7 +12,7 @@
     vocabularies = vocabularies
     addItems([vocabulary])
   }
-
+  
   async function resetCardDBTable () {
     await clearAll()
     vocabularies = await getAll()
@@ -25,10 +25,12 @@
       vocabularies.splice(index, 1)
     )
     vocabularies = vocabularies
+    deleteItem(vocabulary.key)
   }
 
-  const { addItems, getAll, clearAll } = useDB(async () => {
+  const { addItems, getAll, clearAll, deleteItem } = useDB(async () => {
     vocabularies = await getAll()
+    console.log(vocabularies)
   })
 </script>
 
@@ -36,7 +38,7 @@
   <AButton on:click={resetCardDBTable}>Clear Card Table in DB</AButton>
   <CardMaker on:add-card={addCard}/>
   {#each vocabularies as vocabulary }
-    <Card {...vocabulary}>This is my card</Card>
+    <Card key={vocabulary.key} {...vocabulary}>This is my card</Card>
     <button on:click={(e) => removeCard(vocabulary)}>Remove</button>
   {/each}
 </main>

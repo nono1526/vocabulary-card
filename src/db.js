@@ -49,15 +49,30 @@ export function useDB (dbLoaded = () => {}) {
 
       objectStore.openCursor().onsuccess = e => {
         const cursor = e.target.result
-
         if (cursor) {
-          cards.push(cursor.value)
+          cards.push({
+            ...cursor.value,
+            key: cursor.key
+          })
           cursor.continue()
         } else {
           console.log('get all finish!', cards)
           resolve(cards)
         }
       }
+    })
+  }
+
+  const _getObjectStore = table => db
+    .transaction([table], 'readwrite')
+    .objectStore(table)
+
+  const deleteItem = async key => {
+    return new Promise((resolve, reject) => {
+      const objectStore = _getObjectStore('cards')
+      const request = objectStore.delete(key)
+      request.onsuccess = e => resolve(e)
+      request.onerror = e => reject(e)
     })
   }
 
@@ -93,6 +108,7 @@ export function useDB (dbLoaded = () => {}) {
   return {
     addItems,
     getAll,
-    clearAll
+    clearAll,
+    deleteItem
   }
 }
