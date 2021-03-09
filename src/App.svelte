@@ -7,20 +7,15 @@
 
   let vocabularies = []
 
-  function addCard (card) {
-    console.log('card', card)
-    vocabularies.push(card.detail)
+  function addCard ({detail: vocabulary}) {
+    vocabularies.push(vocabulary)
     vocabularies = vocabularies
-  }
-
-  async function syncDB (data) {
-    add(data)
+    addItems([vocabulary])
   }
 
   async function resetCardDBTable () {
     await clearAll()
     vocabularies = await getAll()
-    // window.setTimeout(() => {}, 1000)
   }
 
   function removeCard (vocabulary) {
@@ -32,14 +27,12 @@
     vocabularies = vocabularies
   }
 
-  const { add, getAll, clearAll } = useDB(async () => {
+  const { addItems, getAll, clearAll } = useDB(async () => {
     vocabularies = await getAll()
   })
 </script>
 
 <main>
-  {vocabularies}
-  <AButton on:click={syncDB(vocabularies)}>SAVE TO DB</AButton>
   <AButton on:click={resetCardDBTable}>Clear Card Table in DB</AButton>
   <CardMaker on:add-card={addCard}/>
   {#each vocabularies as vocabulary }

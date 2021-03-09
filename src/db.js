@@ -76,7 +76,7 @@ export function useDB (dbLoaded = () => {}) {
     })
   }
 
-  const add = insertedItems => {
+  const addItems = insertedItems => {
     const transaction = db.transaction(['cards'], 'readwrite')
     transaction.oncomplete = function(event) {
       console.log('All done!');
@@ -91,7 +91,7 @@ export function useDB (dbLoaded = () => {}) {
   }
 
   return {
-    add,
+    addItems,
     getAll,
     clearAll
   }
