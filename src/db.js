@@ -60,7 +60,22 @@ export function useDB (dbLoaded = () => {}) {
     })
   }
 
-  const add = async insertedItems => {
+  const clearAll = async () => {
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(['cards'], 'readwrite')
+      const objectStore = transaction.objectStore('cards')
+      const clearRequest = objectStore.clear()
+
+      clearRequest.onsuccess = e => {
+        resolve(e)
+      }
+      clearRequest.onerror = e => {
+        reject(e)
+      }
+    })
+  }
+
+  const add = insertedItems => {
     const transaction = db.transaction(['cards'], 'readwrite')
     transaction.oncomplete = function(event) {
       console.log('All done!');
@@ -76,6 +91,7 @@ export function useDB (dbLoaded = () => {}) {
 
   return {
     add,
-    getAll
+    getAll,
+    clearAll
   }
 }

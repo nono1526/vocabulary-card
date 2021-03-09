@@ -1326,7 +1326,22 @@ var app = (function () {
         })
       };
 
-      const add = async insertedItems => {
+      const clearAll = async () => {
+        return new Promise((resolve, reject) => {
+          const transaction = db.transaction(['cards'], 'readwrite');
+          const objectStore = transaction.objectStore('cards');
+          const clearRequest = objectStore.clear();
+
+          clearRequest.onsuccess = e => {
+            resolve(e);
+          };
+          clearRequest.onerror = e => {
+            reject(e);
+          };
+        })
+      };
+
+      const add = insertedItems => {
         const transaction = db.transaction(['cards'], 'readwrite');
         transaction.oncomplete = function(event) {
           console.log('All done!');
@@ -1342,7 +1357,8 @@ var app = (function () {
 
       return {
         add,
-        getAll
+        getAll,
+        clearAll
       }
     }
 
@@ -1353,12 +1369,12 @@ var app = (function () {
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[7] = list[i];
+    	child_ctx[9] = list[i];
     	return child_ctx;
     }
 
-    // (36:2) <AButton on:click={syncDB(vocabularies)}>
-    function create_default_slot_1(ctx) {
+    // (42:2) <AButton on:click={syncDB(vocabularies)}>
+    function create_default_slot_2(ctx) {
     	let t;
 
     	const block = {
@@ -1375,16 +1391,43 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_default_slot_1.name,
+    		id: create_default_slot_2.name,
     		type: "slot",
-    		source: "(36:2) <AButton on:click={syncDB(vocabularies)}>",
+    		source: "(42:2) <AButton on:click={syncDB(vocabularies)}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (40:4) <Card {...vocabulary}>
+    // (43:2) <AButton on:click={resetCardDBTable}>
+    function create_default_slot_1(ctx) {
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			t = text("Clear Card Table in DB");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_default_slot_1.name,
+    		type: "slot",
+    		source: "(43:2) <AButton on:click={resetCardDBTable}>",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (46:4) <Card {...vocabulary}>
     function create_default_slot$1(ctx) {
     	let t;
 
@@ -1404,14 +1447,14 @@ var app = (function () {
     		block,
     		id: create_default_slot$1.name,
     		type: "slot",
-    		source: "(40:4) <Card {...vocabulary}>",
+    		source: "(46:4) <Card {...vocabulary}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (39:2) {#each vocabularies as vocabulary }
+    // (45:2) {#each vocabularies as vocabulary }
     function create_each_block(ctx) {
     	let card;
     	let t0;
@@ -1419,7 +1462,7 @@ var app = (function () {
     	let current;
     	let mounted;
     	let dispose;
-    	const card_spread_levels = [/*vocabulary*/ ctx[7]];
+    	const card_spread_levels = [/*vocabulary*/ ctx[9]];
 
     	let card_props = {
     		$$slots: { default: [create_default_slot$1] },
@@ -1433,7 +1476,7 @@ var app = (function () {
     	card = new Card({ props: card_props, $$inline: true });
 
     	function click_handler(...args) {
-    		return /*click_handler*/ ctx[4](/*vocabulary*/ ctx[7], ...args);
+    		return /*click_handler*/ ctx[5](/*vocabulary*/ ctx[9], ...args);
     	}
 
     	const block = {
@@ -1442,7 +1485,7 @@ var app = (function () {
     			t0 = space();
     			button = element("button");
     			button.textContent = "Remove";
-    			add_location(button, file$4, 40, 4, 945);
+    			add_location(button, file$4, 46, 4, 1170);
     		},
     		m: function mount(target, anchor) {
     			mount_component(card, target, anchor);
@@ -1459,10 +1502,10 @@ var app = (function () {
     			ctx = new_ctx;
 
     			const card_changes = (dirty & /*vocabularies*/ 1)
-    			? get_spread_update(card_spread_levels, [get_spread_object(/*vocabulary*/ ctx[7])])
+    			? get_spread_update(card_spread_levels, [get_spread_object(/*vocabulary*/ ctx[9])])
     			: {};
 
-    			if (dirty & /*$$scope*/ 1024) {
+    			if (dirty & /*$$scope*/ 4096) {
     				card_changes.$$scope = { dirty, ctx };
     			}
 
@@ -1490,7 +1533,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(39:2) {#each vocabularies as vocabulary }",
+    		source: "(45:2) {#each vocabularies as vocabulary }",
     		ctx
     	});
 
@@ -1501,13 +1544,27 @@ var app = (function () {
     	let main;
     	let t0;
     	let t1;
-    	let abutton;
+    	let abutton0;
     	let t2;
-    	let cardmaker;
+    	let abutton1;
     	let t3;
+    	let cardmaker;
+    	let t4;
     	let current;
 
-    	abutton = new AButton({
+    	abutton0 = new AButton({
+    			props: {
+    				$$slots: { default: [create_default_slot_2] },
+    				$$scope: { ctx }
+    			},
+    			$$inline: true
+    		});
+
+    	abutton0.$on("click", function () {
+    		if (is_function(/*syncDB*/ ctx[2](/*vocabularies*/ ctx[0]))) /*syncDB*/ ctx[2](/*vocabularies*/ ctx[0]).apply(this, arguments);
+    	});
+
+    	abutton1 = new AButton({
     			props: {
     				$$slots: { default: [create_default_slot_1] },
     				$$scope: { ctx }
@@ -1515,10 +1572,7 @@ var app = (function () {
     			$$inline: true
     		});
 
-    	abutton.$on("click", function () {
-    		if (is_function(/*syncDB*/ ctx[2](/*vocabularies*/ ctx[0]))) /*syncDB*/ ctx[2](/*vocabularies*/ ctx[0]).apply(this, arguments);
-    	});
-
+    	abutton1.$on("click", /*resetCardDBTable*/ ctx[3]);
     	cardmaker = new CardMaker({ $$inline: true });
     	cardmaker.$on("add-card", /*addCard*/ ctx[1]);
     	let each_value = /*vocabularies*/ ctx[0];
@@ -1538,16 +1592,18 @@ var app = (function () {
     			main = element("main");
     			t0 = text(/*vocabularies*/ ctx[0]);
     			t1 = space();
-    			create_component(abutton.$$.fragment);
+    			create_component(abutton0.$$.fragment);
     			t2 = space();
-    			create_component(cardmaker.$$.fragment);
+    			create_component(abutton1.$$.fragment);
     			t3 = space();
+    			create_component(cardmaker.$$.fragment);
+    			t4 = space();
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				each_blocks[i].c();
     			}
 
-    			add_location(main, file$4, 33, 0, 726);
+    			add_location(main, file$4, 39, 0, 882);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1556,10 +1612,12 @@ var app = (function () {
     			insert_dev(target, main, anchor);
     			append_dev(main, t0);
     			append_dev(main, t1);
-    			mount_component(abutton, main, null);
+    			mount_component(abutton0, main, null);
     			append_dev(main, t2);
-    			mount_component(cardmaker, main, null);
+    			mount_component(abutton1, main, null);
     			append_dev(main, t3);
+    			mount_component(cardmaker, main, null);
+    			append_dev(main, t4);
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				each_blocks[i].m(main, null);
@@ -1570,15 +1628,22 @@ var app = (function () {
     		p: function update(new_ctx, [dirty]) {
     			ctx = new_ctx;
     			if (!current || dirty & /*vocabularies*/ 1) set_data_dev(t0, /*vocabularies*/ ctx[0]);
-    			const abutton_changes = {};
+    			const abutton0_changes = {};
 
-    			if (dirty & /*$$scope*/ 1024) {
-    				abutton_changes.$$scope = { dirty, ctx };
+    			if (dirty & /*$$scope*/ 4096) {
+    				abutton0_changes.$$scope = { dirty, ctx };
     			}
 
-    			abutton.$set(abutton_changes);
+    			abutton0.$set(abutton0_changes);
+    			const abutton1_changes = {};
 
-    			if (dirty & /*removeCard, vocabularies*/ 9) {
+    			if (dirty & /*$$scope*/ 4096) {
+    				abutton1_changes.$$scope = { dirty, ctx };
+    			}
+
+    			abutton1.$set(abutton1_changes);
+
+    			if (dirty & /*removeCard, vocabularies*/ 17) {
     				each_value = /*vocabularies*/ ctx[0];
     				validate_each_argument(each_value);
     				let i;
@@ -1608,7 +1673,8 @@ var app = (function () {
     		},
     		i: function intro(local) {
     			if (current) return;
-    			transition_in(abutton.$$.fragment, local);
+    			transition_in(abutton0.$$.fragment, local);
+    			transition_in(abutton1.$$.fragment, local);
     			transition_in(cardmaker.$$.fragment, local);
 
     			for (let i = 0; i < each_value.length; i += 1) {
@@ -1618,7 +1684,8 @@ var app = (function () {
     			current = true;
     		},
     		o: function outro(local) {
-    			transition_out(abutton.$$.fragment, local);
+    			transition_out(abutton0.$$.fragment, local);
+    			transition_out(abutton1.$$.fragment, local);
     			transition_out(cardmaker.$$.fragment, local);
     			each_blocks = each_blocks.filter(Boolean);
 
@@ -1630,7 +1697,8 @@ var app = (function () {
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(main);
-    			destroy_component(abutton);
+    			destroy_component(abutton0);
+    			destroy_component(abutton1);
     			destroy_component(cardmaker);
     			destroy_each(each_blocks, detaching);
     		}
@@ -1658,9 +1726,14 @@ var app = (function () {
     		$$invalidate(0, vocabularies);
     	}
 
-    	function syncDB(data) {
+    	async function syncDB(data) {
     		add(data);
     	}
+
+    	async function resetCardDBTable() {
+    		await clearAll();
+    		$$invalidate(0, vocabularies = await getAll());
+    	} // window.setTimeout(() => {}, 1000)
 
     	function removeCard(vocabulary) {
     		const index = vocabularies.indexOf(vocabulary);
@@ -1669,7 +1742,7 @@ var app = (function () {
     		$$invalidate(0, vocabularies);
     	}
 
-    	const { add, getAll } = useDB(async () => {
+    	const { add, getAll, clearAll } = useDB(async () => {
     		$$invalidate(0, vocabularies = await getAll());
     	});
 
@@ -1690,9 +1763,11 @@ var app = (function () {
     		vocabularies,
     		addCard,
     		syncDB,
+    		resetCardDBTable,
     		removeCard,
     		add,
-    		getAll
+    		getAll,
+    		clearAll
     	});
 
     	$$self.$inject_state = $$props => {
@@ -1703,7 +1778,7 @@ var app = (function () {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [vocabularies, addCard, syncDB, removeCard, click_handler];
+    	return [vocabularies, addCard, syncDB, resetCardDBTable, removeCard, click_handler];
     }
 
     class App extends SvelteComponentDev {
