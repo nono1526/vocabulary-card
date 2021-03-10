@@ -11,13 +11,24 @@
 .my-1 {
   margin: 4px 0;
 }
+.card-maker {
+  position: relative;
+  max-width: fit-content;
+}
+.card-maker__add-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  padding: 4px;
+  padding-right: 8px;
+}
 </style>
 
 <div class="card-maker">
-  {en} {tw}
   <Card bind:en={en} bind:tw={tw} editable={true}></Card>
-  <div class="my-1">
+  <div class="my-1 card-maker__add-btn">
     <AButton
+      dark
       on:click={(e) => dispatcher('add-card', {
         en,
         tw

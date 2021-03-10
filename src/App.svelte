@@ -3,7 +3,6 @@
   import CardMaker from './CardMaker.svelte'
   import { useDB } from './db.js'
   import AButton from './AButton.svelte'
-  import { onMount } from 'svelte'
 
   let vocabularies = []
 
@@ -33,7 +32,6 @@
 
   const { addItem, getAll, clearAll, deleteItem } = useDB(async () => {
     vocabularies = await getAll()
-    console.log(vocabularies)
   })
 </script>
 
@@ -67,11 +65,19 @@
     cursor: pointer;
     outline: none;
   }
+  
+  .title {
+    font-weight: normal;
+    margin: 12px 0;
+    color: #171717;
+  }
 </style>
 
 <main>
   <AButton on:click={resetCardDBTable}>Clear Card Table in DB</AButton>
+  <h2 class="title">Add Card</h2>
   <CardMaker on:add-card={addCard}/>
+  <h2 class="title">Cards</h2>
   <div class="card__container">
     {#each vocabularies as vocabulary (vocabulary.key) }
       <div class="card__wrapper">

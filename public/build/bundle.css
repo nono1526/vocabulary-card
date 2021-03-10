@@ -1,4 +1,4 @@
-.my-1.svelte-ew7x4s{margin:4px 0}.card.svelte-1sget3a{width:380px;height:200px;border-radius:10px;border:5px solid #F083AC;background:#F083AC;display:flex;justify-content:center;align-items:center;flex-direction:column;box-shadow:inset 0px 0px 0px 1px #fff;padding:4px;user-select:none}.card__content.svelte-1sget3a{margin:4px
+.my-1.svelte-12ijpri{margin:4px 0}.card-maker.svelte-12ijpri{position:relative;max-width:fit-content}.card-maker__add-btn.svelte-12ijpri{position:absolute;bottom:0;right:0;padding:4px;padding-right:8px}.card.svelte-1sget3a{width:380px;height:200px;border-radius:10px;border:5px solid #F083AC;background:#F083AC;display:flex;justify-content:center;align-items:center;flex-direction:column;box-shadow:inset 0px 0px 0px 1px #fff;padding:4px;user-select:none}.card__content.svelte-1sget3a{margin:4px
   }.a-btn.svelte-10bq2q6.svelte-10bq2q6{border:2px solid #A0E7E5;outline:none;cursor:pointer;border-radius:8px;background-color:transparent;display:flex;justify-content:center;align-items:center;min-height:36px;transition:.33s
 }.a-btn--dark.svelte-10bq2q6 .a-btn__content.svelte-10bq2q6{color:#fff}.a-btn.svelte-10bq2q6.svelte-10bq2q6:hover{border:2px solid #99e5e3;background-color:#A0E7E534}.a-btn__content.svelte-10bq2q6.svelte-10bq2q6{color:#313131;min-width:80px}/*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
 
@@ -349,5 +349,5 @@ template {
 [hidden] {
   display: none;
 }
-.card-maker__text.svelte-spu3vm{color:white;transition:.5s;background-color:transparent;border:none;width:auto;text-align:center}.card-maker__text.svelte-spu3vm:focus{border:1px dashed #fff;border-radius:4px;outline:none;transform:scale(1.1)}.card__container.svelte-1u74bpi{display:flex;flex-wrap:wrap}.card__wrapper.svelte-1u74bpi{position:relative;margin:12px
-  }.card__cancel-btn.svelte-1u74bpi{position:absolute;right:0;top:0;margin:8px;width:20px;height:20px;padding:0;display:flex;justify-content:center;align-items:center;border-radius:50%;background-color:transparent;border:none;color:#fff;cursor:pointer;outline:none}
+.card-maker__text.svelte-spu3vm{color:white;transition:.5s;background-color:transparent;border:none;width:auto;text-align:center}.card-maker__text.svelte-spu3vm:focus{border:1px dashed #fff;border-radius:4px;outline:none;transform:scale(1.1)}.card__container.svelte-ogdi1b{display:flex;flex-wrap:wrap}.card__wrapper.svelte-ogdi1b{position:relative;margin:12px
+  }.card__cancel-btn.svelte-ogdi1b{position:absolute;right:0;top:0;margin:8px;width:20px;height:20px;padding:0;display:flex;justify-content:center;align-items:center;border-radius:50%;background-color:transparent;border:none;color:#fff;cursor:pointer;outline:none}.title.svelte-ogdi1b{font-weight:normal;margin:12px 0;color:#171717}
