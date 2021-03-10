@@ -98,7 +98,7 @@ export function useDB (dbLoaded = () => {}) {
   }
 
   const addItems = insertedItems => {
-    const objectStore = const objectStore = _getObjectStore('cards')
+    const objectStore = _getObjectStore('cards')
     for (let i in insertedItems) {
       let request = objectStore.add(insertedItems[i])
       request.onsuccess = e => {
