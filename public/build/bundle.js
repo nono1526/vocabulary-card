@@ -79,12 +79,6 @@ var app = (function () {
     function detach(node) {
         node.parentNode.removeChild(node);
     }
-    function destroy_each(iterations, detaching) {
-        for (let i = 0; i < iterations.length; i += 1) {
-            if (iterations[i])
-                iterations[i].d(detaching);
-        }
-    }
     function element(name) {
         return document.createElement(name);
     }
@@ -109,6 +103,9 @@ var app = (function () {
     }
     function set_input_value(input, value) {
         input.value = value == null ? '' : value;
+    }
+    function toggle_class(element, name, toggle) {
+        element.classList[toggle ? 'add' : 'remove'](name);
     }
     function custom_event(type, detail) {
         const e = document.createEvent('CustomEvent');
@@ -255,6 +252,96 @@ var app = (function () {
         : typeof globalThis !== 'undefined'
             ? globalThis
             : global);
+    function outro_and_destroy_block(block, lookup) {
+        transition_out(block, 1, 1, () => {
+            lookup.delete(block.key);
+        });
+    }
+    function update_keyed_each(old_blocks, dirty, get_key, dynamic, ctx, list, lookup, node, destroy, create_each_block, next, get_context) {
+        let o = old_blocks.length;
+        let n = list.length;
+        let i = o;
+        const old_indexes = {};
+        while (i--)
+            old_indexes[old_blocks[i].key] = i;
+        const new_blocks = [];
+        const new_lookup = new Map();
+        const deltas = new Map();
+        i = n;
+        while (i--) {
+            const child_ctx = get_context(ctx, list, i);
+            const key = get_key(child_ctx);
+            let block = lookup.get(key);
+            if (!block) {
+                block = create_each_block(key, child_ctx);
+                block.c();
+            }
+            else if (dynamic) {
+                block.p(child_ctx, dirty);
+            }
+            new_lookup.set(key, new_blocks[i] = block);
+            if (key in old_indexes)
+                deltas.set(key, Math.abs(i - old_indexes[key]));
+        }
+        const will_move = new Set();
+        const did_move = new Set();
+        function insert(block) {
+            transition_in(block, 1);
+            block.m(node, next);
+            lookup.set(block.key, block);
+            next = block.first;
+            n--;
+        }
+        while (o && n) {
+            const new_block = new_blocks[n - 1];
+            const old_block = old_blocks[o - 1];
+            const new_key = new_block.key;
+            const old_key = old_block.key;
+            if (new_block === old_block) {
+                // do nothing
+                next = new_block.first;
+                o--;
+                n--;
+            }
+            else if (!new_lookup.has(old_key)) {
+                // remove old block
+                destroy(old_block, lookup);
+                o--;
+            }
+            else if (!lookup.has(new_key) || will_move.has(new_key)) {
+                insert(new_block);
+            }
+            else if (did_move.has(old_key)) {
+                o--;
+            }
+            else if (deltas.get(new_key) > deltas.get(old_key)) {
+                did_move.add(new_key);
+                insert(new_block);
+            }
+            else {
+                will_move.add(old_key);
+                o--;
+            }
+        }
+        while (o--) {
+            const old_block = old_blocks[o];
+            if (!new_lookup.has(old_block.key))
+                destroy(old_block, lookup);
+        }
+        while (n)
+            insert(new_blocks[n - 1]);
+        return new_blocks;
+    }
+    function validate_each_keys(ctx, list, get_context, get_key) {
+        const keys = new Set();
+        for (let i = 0; i < list.length; i++) {
+            const key = get_key(get_context(ctx, list, i));
+            if (keys.has(key)) {
+                throw new Error('Cannot have duplicate keys in a keyed each');
+            }
+            keys.add(key);
+        }
+    }
 
     function get_spread_update(levels, updates) {
         const update = {};
@@ -937,18 +1024,19 @@ var app = (function () {
     	let current;
     	let mounted;
     	let dispose;
-    	const default_slot_template = /*#slots*/ ctx[2].default;
-    	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[1], null);
+    	const default_slot_template = /*#slots*/ ctx[3].default;
+    	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[2], null);
 
     	const block = {
     		c: function create() {
     			button = element("button");
     			span = element("span");
     			if (default_slot) default_slot.c();
-    			attr_dev(span, "class", "a-btn__content svelte-1pealyc");
-    			add_location(span, file$2, 40, 2, 632);
-    			attr_dev(button, "class", "a-btn  svelte-1pealyc");
-    			add_location(button, file$2, 36, 0, 572);
+    			attr_dev(span, "class", "a-btn__content svelte-10bq2q6");
+    			add_location(span, file$2, 46, 2, 732);
+    			attr_dev(button, "class", "a-btn svelte-10bq2q6");
+    			toggle_class(button, "a-btn--dark", /*dark*/ ctx[0]);
+    			add_location(button, file$2, 41, 0, 646);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -964,15 +1052,19 @@ var app = (function () {
     			current = true;
 
     			if (!mounted) {
-    				dispose = listen_dev(button, "click", /*handleButtonClick*/ ctx[0], false, false, false);
+    				dispose = listen_dev(button, "click", /*handleButtonClick*/ ctx[1], false, false, false);
     				mounted = true;
     			}
     		},
     		p: function update(ctx, [dirty]) {
     			if (default_slot) {
-    				if (default_slot.p && dirty & /*$$scope*/ 2) {
-    					update_slot(default_slot, default_slot_template, ctx, /*$$scope*/ ctx[1], dirty, null, null);
+    				if (default_slot.p && dirty & /*$$scope*/ 4) {
+    					update_slot(default_slot, default_slot_template, ctx, /*$$scope*/ ctx[2], dirty, null, null);
     				}
+    			}
+
+    			if (dirty & /*dark*/ 1) {
+    				toggle_class(button, "a-btn--dark", /*dark*/ ctx[0]);
     			}
     		},
     		i: function intro(local) {
@@ -1007,34 +1099,45 @@ var app = (function () {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("AButton", slots, ['default']);
     	const dispatch = createEventDispatcher();
+    	let { dark = false } = $$props;
 
     	function handleButtonClick(e) {
     		dispatch("click", e);
     	}
 
-    	const writable_props = [];
+    	const writable_props = ["dark"];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<AButton> was created with unknown prop '${key}'`);
     	});
 
     	$$self.$$set = $$props => {
-    		if ("$$scope" in $$props) $$invalidate(1, $$scope = $$props.$$scope);
+    		if ("dark" in $$props) $$invalidate(0, dark = $$props.dark);
+    		if ("$$scope" in $$props) $$invalidate(2, $$scope = $$props.$$scope);
     	};
 
     	$$self.$capture_state = () => ({
     		createEventDispatcher,
     		dispatch,
+    		dark,
     		handleButtonClick
     	});
 
-    	return [handleButtonClick, $$scope, slots];
+    	$$self.$inject_state = $$props => {
+    		if ("dark" in $$props) $$invalidate(0, dark = $$props.dark);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [dark, handleButtonClick, $$scope, slots];
     }
 
     class AButton extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$2, create_fragment$2, safe_not_equal, {});
+    		init(this, options, instance$2, create_fragment$2, safe_not_equal, { dark: 0 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -1042,6 +1145,14 @@ var app = (function () {
     			options,
     			id: create_fragment$2.name
     		});
+    	}
+
+    	get dark() {
+    		throw new Error("<AButton>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set dark(value) {
+    		throw new Error("<AButton>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
     }
 
@@ -1309,9 +1420,7 @@ var app = (function () {
       const getAll = async () => {
         cards.length = 0;
         return new Promise((resolve, reject) => {
-          const objectStore = db
-          .transaction(['cards'], 'readwrite')
-          .objectStore('cards');
+          const objectStore = _getObjectStore('cards');
 
           objectStore.openCursor().onsuccess = e => {
             const cursor = e.target.result;
@@ -1366,11 +1475,7 @@ var app = (function () {
       };
 
       const addItems = insertedItems => {
-        const transaction = db.transaction(['cards'], 'readwrite');
-        transaction.oncomplete = function(event) {
-          console.log('All done!');
-        };
-        const objectStore = transaction.objectStore('cards');
+        const objectStore = _getObjectStore('cards');
         for (let i in insertedItems) {
           let request = objectStore.add(insertedItems[i]);
           request.onsuccess = e => {
@@ -1395,11 +1500,11 @@ var app = (function () {
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[9] = list[i];
+    	child_ctx[8] = list[i];
     	return child_ctx;
     }
 
-    // (41:2) <AButton on:click={resetCardDBTable}>
+    // (73:2) <AButton on:click={resetCardDBTable}>
     function create_default_slot_1(ctx) {
     	let t;
 
@@ -1419,14 +1524,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_1.name,
     		type: "slot",
-    		source: "(41:2) <AButton on:click={resetCardDBTable}>",
+    		source: "(73:2) <AButton on:click={resetCardDBTable}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (44:4) <Card key={vocabulary.key} {...vocabulary}>
+    // (78:8) <Card key={vocabulary.key} {...vocabulary}>
     function create_default_slot$1(ctx) {
     	let t;
 
@@ -1446,22 +1551,24 @@ var app = (function () {
     		block,
     		id: create_default_slot$1.name,
     		type: "slot",
-    		source: "(44:4) <Card key={vocabulary.key} {...vocabulary}>",
+    		source: "(78:8) <Card key={vocabulary.key} {...vocabulary}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (43:2) {#each vocabularies as vocabulary }
-    function create_each_block(ctx) {
+    // (76:4) {#each vocabularies as vocabulary (vocabulary.key) }
+    function create_each_block(key_1, ctx) {
+    	let div;
     	let card;
     	let t0;
     	let button;
+    	let t2;
     	let current;
     	let mounted;
     	let dispose;
-    	const card_spread_levels = [{ key: /*vocabulary*/ ctx[9].key }, /*vocabulary*/ ctx[9]];
+    	const card_spread_levels = [{ key: /*vocabulary*/ ctx[8].key }, /*vocabulary*/ ctx[8]];
 
     	let card_props = {
     		$$slots: { default: [create_default_slot$1] },
@@ -1474,26 +1581,42 @@ var app = (function () {
 
     	card = new Card({ props: card_props, $$inline: true });
 
-    	function click_handler(...args) {
-    		return /*click_handler*/ ctx[4](/*vocabulary*/ ctx[9], ...args);
-    	}
-
     	const block = {
+    		key: key_1,
+    		first: null,
     		c: function create() {
+    			div = element("div");
     			create_component(card.$$.fragment);
     			t0 = space();
     			button = element("button");
-    			button.textContent = "Remove";
-    			add_location(button, file$4, 44, 4, 1157);
+    			button.textContent = "x";
+    			t2 = space();
+    			attr_dev(button, "class", "card__cancel-btn svelte-1u74bpi");
+    			add_location(button, file$4, 78, 8, 1753);
+    			attr_dev(div, "class", "card__wrapper svelte-1u74bpi");
+    			add_location(div, file$4, 76, 6, 1643);
+    			this.first = div;
     		},
     		m: function mount(target, anchor) {
-    			mount_component(card, target, anchor);
-    			insert_dev(target, t0, anchor);
-    			insert_dev(target, button, anchor);
+    			insert_dev(target, div, anchor);
+    			mount_component(card, div, null);
+    			append_dev(div, t0);
+    			append_dev(div, button);
+    			append_dev(div, t2);
     			current = true;
 
     			if (!mounted) {
-    				dispose = listen_dev(button, "click", click_handler, false, false, false);
+    				dispose = listen_dev(
+    					button,
+    					"click",
+    					function () {
+    						if (is_function(/*removeCard*/ ctx[3](/*vocabulary*/ ctx[8]))) /*removeCard*/ ctx[3](/*vocabulary*/ ctx[8]).apply(this, arguments);
+    					},
+    					false,
+    					false,
+    					false
+    				);
+
     				mounted = true;
     			}
     		},
@@ -1502,12 +1625,12 @@ var app = (function () {
 
     			const card_changes = (dirty & /*vocabularies*/ 1)
     			? get_spread_update(card_spread_levels, [
-    					{ key: /*vocabulary*/ ctx[9].key },
-    					get_spread_object(/*vocabulary*/ ctx[9])
+    					{ key: /*vocabulary*/ ctx[8].key },
+    					get_spread_object(/*vocabulary*/ ctx[8])
     				])
     			: {};
 
-    			if (dirty & /*$$scope*/ 4096) {
+    			if (dirty & /*$$scope*/ 2048) {
     				card_changes.$$scope = { dirty, ctx };
     			}
 
@@ -1523,9 +1646,8 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			destroy_component(card, detaching);
-    			if (detaching) detach_dev(t0);
-    			if (detaching) detach_dev(button);
+    			if (detaching) detach_dev(div);
+    			destroy_component(card);
     			mounted = false;
     			dispose();
     		}
@@ -1535,7 +1657,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(43:2) {#each vocabularies as vocabulary }",
+    		source: "(76:4) {#each vocabularies as vocabulary (vocabulary.key) }",
     		ctx
     	});
 
@@ -1548,6 +1670,9 @@ var app = (function () {
     	let t0;
     	let cardmaker;
     	let t1;
+    	let div;
+    	let each_blocks = [];
+    	let each_1_lookup = new Map();
     	let current;
 
     	abutton = new AButton({
@@ -1563,15 +1688,14 @@ var app = (function () {
     	cardmaker.$on("add-card", /*addCard*/ ctx[1]);
     	let each_value = /*vocabularies*/ ctx[0];
     	validate_each_argument(each_value);
-    	let each_blocks = [];
+    	const get_key = ctx => /*vocabulary*/ ctx[8].key;
+    	validate_each_keys(ctx, each_value, get_each_context, get_key);
 
     	for (let i = 0; i < each_value.length; i += 1) {
-    		each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
+    		let child_ctx = get_each_context(ctx, each_value, i);
+    		let key = get_key(child_ctx);
+    		each_1_lookup.set(key, each_blocks[i] = create_each_block(key, child_ctx));
     	}
-
-    	const out = i => transition_out(each_blocks[i], 1, 1, () => {
-    		each_blocks[i] = null;
-    	});
 
     	const block = {
     		c: function create() {
@@ -1580,12 +1704,15 @@ var app = (function () {
     			t0 = space();
     			create_component(cardmaker.$$.fragment);
     			t1 = space();
+    			div = element("div");
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				each_blocks[i].c();
     			}
 
-    			add_location(main, file$4, 39, 0, 929);
+    			attr_dev(div, "class", "card__container svelte-1u74bpi");
+    			add_location(div, file$4, 74, 2, 1550);
+    			add_location(main, file$4, 71, 0, 1432);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1596,9 +1723,10 @@ var app = (function () {
     			append_dev(main, t0);
     			mount_component(cardmaker, main, null);
     			append_dev(main, t1);
+    			append_dev(main, div);
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(main, null);
+    				each_blocks[i].m(div, null);
     			}
 
     			current = true;
@@ -1606,7 +1734,7 @@ var app = (function () {
     		p: function update(ctx, [dirty]) {
     			const abutton_changes = {};
 
-    			if (dirty & /*$$scope*/ 4096) {
+    			if (dirty & /*$$scope*/ 2048) {
     				abutton_changes.$$scope = { dirty, ctx };
     			}
 
@@ -1615,28 +1743,9 @@ var app = (function () {
     			if (dirty & /*removeCard, vocabularies*/ 9) {
     				each_value = /*vocabularies*/ ctx[0];
     				validate_each_argument(each_value);
-    				let i;
-
-    				for (i = 0; i < each_value.length; i += 1) {
-    					const child_ctx = get_each_context(ctx, each_value, i);
-
-    					if (each_blocks[i]) {
-    						each_blocks[i].p(child_ctx, dirty);
-    						transition_in(each_blocks[i], 1);
-    					} else {
-    						each_blocks[i] = create_each_block(child_ctx);
-    						each_blocks[i].c();
-    						transition_in(each_blocks[i], 1);
-    						each_blocks[i].m(main, null);
-    					}
-    				}
-
     				group_outros();
-
-    				for (i = each_value.length; i < each_blocks.length; i += 1) {
-    					out(i);
-    				}
-
+    				validate_each_keys(ctx, each_value, get_each_context, get_key);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, div, outro_and_destroy_block, create_each_block, null, get_each_context);
     				check_outros();
     			}
     		},
@@ -1654,7 +1763,6 @@ var app = (function () {
     		o: function outro(local) {
     			transition_out(abutton.$$.fragment, local);
     			transition_out(cardmaker.$$.fragment, local);
-    			each_blocks = each_blocks.filter(Boolean);
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				transition_out(each_blocks[i]);
@@ -1666,7 +1774,10 @@ var app = (function () {
     			if (detaching) detach_dev(main);
     			destroy_component(abutton);
     			destroy_component(cardmaker);
-    			destroy_each(each_blocks, detaching);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].d();
+    			}
     		}
     	};
 
@@ -1716,8 +1827,6 @@ var app = (function () {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console_1$1.warn(`<App> was created with unknown prop '${key}'`);
     	});
 
-    	const click_handler = (vocabulary, e) => removeCard(vocabulary);
-
     	$$self.$capture_state = () => ({
     		Card,
     		CardMaker,
@@ -1742,7 +1851,7 @@ var app = (function () {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [vocabularies, addCard, resetCardDBTable, removeCard, click_handler];
+    	return [vocabularies, addCard, resetCardDBTable, removeCard];
     }
 
     class App extends SvelteComponentDev {

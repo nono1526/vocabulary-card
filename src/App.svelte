@@ -37,15 +37,47 @@
   })
 </script>
 
+
+<style>
+  .card__container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .card__wrapper {
+    position: relative;
+    margin: 12px
+  }
+  
+  .card__cancel-btn {
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin: 8px;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background-color: transparent;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    outline: none;
+  }
+</style>
+
 <main>
   <AButton on:click={resetCardDBTable}>Clear Card Table in DB</AButton>
   <CardMaker on:add-card={addCard}/>
-  {#each vocabularies as vocabulary (vocabulary.key) }
-    <Card key={vocabulary.key} {...vocabulary}>This is my card</Card>
-    <button on:click={(e) => removeCard(vocabulary)}>Remove</button>
-  {/each}
+  <div class="card__container">
+    {#each vocabularies as vocabulary (vocabulary.key) }
+      <div class="card__wrapper">
+        <Card key={vocabulary.key} {...vocabulary}>This is my card</Card>
+        <button class="card__cancel-btn" on:click={removeCard(vocabulary)}>x</button>
+      </div>
+    {/each}
+  </div>
 </main>
-
-<style>
-
-</style>
