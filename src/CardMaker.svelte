@@ -2,6 +2,7 @@
   import { createEventDispatcher } from 'svelte'
   import Card from './Card.svelte'
   import AButton from './AButton.svelte'
+  let isFront = true
   let en = 'Hello'
   let tw = '你好'
   const dispatcher = createEventDispatcher()
@@ -22,6 +23,14 @@
   padding: 4px;
   padding-right: 8px;
 }
+
+.card-maker__rotate-btn {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  padding: 8px;
+  padding-left: 8px;
+}
 </style>
 
 <div class="card-maker">
@@ -34,5 +43,10 @@
         tw
       })}
     >ADD</AButton>
+  </div>
+  <div class="card-maker__rotate-btn">
+    <AButton dark on:click="{e => isFront = !isFront}">
+      ROTATE
+    </AButton>
   </div>
 </div>
