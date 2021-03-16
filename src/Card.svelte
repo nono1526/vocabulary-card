@@ -1,9 +1,10 @@
 <script>
   import ATextbox from './ATextbox.svelte'
   export let editable = false
-  export let en
-  export let tw
-  
+  export let en = ''
+  export let tw = ''
+  export let partOfSpeech = ''
+  export let isFront = true
 </script>
 
 <style>
@@ -27,20 +28,30 @@
   }
 
 </style>
-
-<div class="card" >
+{#if isFront}
+<div class="card">
   <div class="card__content">
       <ATextbox
       bind:value={en}
       fontSize={'3rem'}
-      class=""
       disabled={!editable}
     />
   </div>
   <div class="card__content">
     <ATextbox
-      bind:value={tw}
+      bind:value={partOfSpeech}
       disabled={!editable}
     />
   </div>
 </div>
+{:else}
+<div class="card card__back">
+  <div class="card__content">
+    <ATextbox
+      bind:value={tw}
+      fontSize={'3rem'}
+    >
+    </ATextbox>
+  </div>
+</div>
+{/if}

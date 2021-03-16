@@ -5,6 +5,7 @@
   let isFront = true
   let en = 'Hello'
   let tw = '你好'
+  let partOfSpeech = 'n.'
   const dispatcher = createEventDispatcher()
 </script>
 
@@ -34,13 +35,20 @@
 </style>
 
 <div class="card-maker">
-  <Card bind:en={en} bind:tw={tw} editable={true}></Card>
+  <Card
+    bind:partOfSpeech={partOfSpeech}
+    bind:en={en}
+    bind:tw={tw}
+    isFront={isFront}
+    editable={true}>
+  </Card>
   <div class="my-1 card-maker__add-btn">
     <AButton
       dark
       on:click={(e) => dispatcher('add-card', {
         en,
-        tw
+        tw,
+        partOfSpeech
       })}
     >ADD</AButton>
   </div>

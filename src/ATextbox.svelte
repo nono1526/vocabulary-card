@@ -11,16 +11,15 @@
 
   function handleInput (event) {
     const newValue = event.target.value
-    console.log(newValue)
     event.target.size = strLength(newValue)
   }
 
   function strLength(str) {
-    var count = 0;
-    for (var i = 0, len = str.length; i < len; i++) {
-        count += str.charCodeAt(i) < 256 ? 1 : 2;
+    let count = 1
+    for (let i = 0, len = str.length; i < len; i++) {
+        count += str.charCodeAt(i) < 256 ? 1 : 2
     }
-    return count;
+    return count
 }
 </script>
 
@@ -48,5 +47,4 @@
   bind:this={inputElement}
   {disabled}
   on:input={handleInput}
-  clas
 />

@@ -6,7 +6,7 @@
 
   let vocabularies = []
 
-  async function addCard ({detail: vocabulary}) {
+  async function addCard ({ detail: vocabulary }) {
     const key = await addItem(vocabulary)
     vocabularies.push({
       ...vocabulary,
@@ -81,7 +81,7 @@
   <div class="card__container">
     {#each vocabularies as vocabulary (vocabulary.key) }
       <div class="card__wrapper">
-        <Card key={vocabulary.key} {...vocabulary}>This is my card</Card>
+        <Card {...vocabulary}></Card>
         <button class="card__cancel-btn" on:click={removeCard(vocabulary)}>x</button>
       </div>
     {/each}
