@@ -1,10 +1,12 @@
 <script>
   import ATextbox from './ATextbox.svelte'
+  import { createEventDispatcher } from 'svelte'
   export let editable = false
   export let en = ''
   export let tw = ''
   export let partOfSpeech = ''
   export let isFront = true
+  const dispatcher = createEventDispatcher()
 </script>
 
 <style>
@@ -29,7 +31,9 @@
 
 </style>
 {#if isFront}
-<div class="card">
+<div class="card"
+  on:click={e => dispatcher('click', e)}
+>
   <div class="card__content">
       <ATextbox
       bind:value={en}
@@ -45,11 +49,14 @@
   </div>
 </div>
 {:else}
-<div class="card card__back">
+<div class="card card__back"
+  on:click={e => dispatcher('click', e)}
+>
   <div class="card__content">
     <ATextbox
       bind:value={tw}
       fontSize={'3rem'}
+      disabled={!editable}
     >
     </ATextbox>
   </div>

@@ -10,6 +10,7 @@
     const key = await addItem(vocabulary)
     vocabularies.push({
       ...vocabulary,
+      isFront: true,
       key
     })
     vocabularies = vocabularies
@@ -17,7 +18,7 @@
   
   async function resetCardDBTable () {
     await clearAll()
-    vocabularies = await getAll()
+    vocabularies = []
   }
 
   function removeCard (vocabulary) {
@@ -30,8 +31,21 @@
     deleteItem(vocabulary.key)
   }
 
+  function rotateCard (vocabulary) {
+    vocabulary.isFront = !vocabulary.isFront
+    vocabularies = vocabularies // svelte need to reload array
+  }
+
+  function initVocabulary () {
+    vocabularies = vocabularies.map(vocabuary => ({
+      ...vocabuary,
+      isFront: true
+    }))
+  }
+
   const { addItem, getAll, clearAll, deleteItem } = useDB(async () => {
     vocabularies = await getAll()
+    initVocabulary()
   })
 </script>
 
@@ -81,7 +95,9 @@
   <div class="card__container">
     {#each vocabularies as vocabulary (vocabulary.key) }
       <div class="card__wrapper">
-        <Card {...vocabulary}></Card>
+        <Card
+          on:click={rotateCard(vocabulary)}
+          {...vocabulary}></Card>
         <button class="card__cancel-btn" on:click={removeCard(vocabulary)}>x</button>
       </div>
     {/each}
