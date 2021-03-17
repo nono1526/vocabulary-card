@@ -24,15 +24,19 @@
 </script>
 
 <style>
-  .card-maker__text {
+  .a-textbox {
     color:  white;
     transition: .5s;
     background-color: transparent;
     border: none;
     width: auto;
     text-align: center;
+
   }
-  .card-maker__text:focus {
+  .a-text--edit {
+    border: 1px dashed #fff;
+  }
+  .a-textbox:focus {
     border: 1px dashed #fff;
     border-radius: 4px;
     outline: none;
@@ -41,10 +45,11 @@
 </style>
 
 <input
-  class="card-maker__text"
+  class="a-textbox"
   style={inputStyle}
   bind:value
   bind:this={inputElement}
   {disabled}
+  class:a-text--edit={!disabled}
   on:input={handleInput}
 />

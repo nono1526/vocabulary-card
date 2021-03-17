@@ -1,11 +1,14 @@
 <script>
   import ATextbox from './ATextbox.svelte'
+  import ATextarea from './ATextarea.svelte'
   import { createEventDispatcher } from 'svelte'
   export let editable = false
   export let en = ''
   export let tw = ''
   export let partOfSpeech = ''
   export let isFront = true
+  export let example = ''
+
   const dispatcher = createEventDispatcher()
 </script>
 
@@ -30,6 +33,7 @@
   }
 
 </style>
+
 {#if isFront}
 <div class="card"
   on:click={e => dispatcher('click', e)}
@@ -59,6 +63,14 @@
       disabled={!editable}
     >
     </ATextbox>
+  </div>
+  <div class="card__content">
+    <ATextarea
+      bind:value={example}
+      fontSize={'0.8rem'}
+      disabled={!editable}
+    >
+    </ATextarea>
   </div>
 </div>
 {/if}

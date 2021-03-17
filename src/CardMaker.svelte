@@ -6,6 +6,7 @@
   let en = 'Hello'
   let tw = '你好'
   let partOfSpeech = 'n.'
+  let example = 'example sentences'
   const dispatcher = createEventDispatcher()
 </script>
 
@@ -39,6 +40,7 @@
     bind:partOfSpeech={partOfSpeech}
     bind:en={en}
     bind:tw={tw}
+    bind:example
     isFront={isFront}
     editable={true}>
   </Card>
@@ -48,7 +50,8 @@
       on:click={(e) => dispatcher('add-card', {
         en,
         tw,
-        partOfSpeech
+        partOfSpeech,
+        example
       })}
     >ADD</AButton>
   </div>
